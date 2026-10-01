@@ -5,6 +5,7 @@ import '../models/data.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.onLogin});
 
+  // Fungsi callback yang dipanggil saat login berhasil.
   final ValueChanged<User> onLogin;
 
   @override
@@ -12,27 +13,37 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // Kredensial yang valid untuk aplikasi ini.
   static const String _validUsername = 'Ariel saputra';
   static const String _validPassword = '124240010';
 
+  // Key form untuk validasi input.
   final _formKey = GlobalKey<FormState>();
+
+  // Controller untuk mengambil isi teks dari field username dan password.
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  // Menyembunyikan password saat awal masuk.
   bool _obscurePassword = true;
 
   @override
   void dispose() {
+    // Membersihkan controller agar tidak terjadi memory leak.
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   void _login() {
+    // Cek apakah form sudah valid, misalnya username/password tidak kosong.
     if (!_formKey.currentState!.validate()) return;
 
+    // Ambil data dari input lalu trim username agar spasi di awal/akhir tidak masalah.
     final username = _usernameController.text.trim();
     final password = _passwordController.text;
 
+    // Jika username/password tidak cocok dengan yang sudah ditentukan, tampilkan pesan.
     if (username != _validUsername || password != _validPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Username atau password salah')),
@@ -40,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    // Jika cocok, kirim data user ke parent widget agar masuk ke halaman utama.
     widget.onLogin(
       User(
         username: username,
@@ -59,10 +71,12 @@ class _LoginPageState extends State<LoginPage> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
               child: Form(
+                // Form ini mengelola validasi username dan password.
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Kotak logo/brand di bagian atas halaman login.
                     Container(
                       height: 170,
                       decoration: BoxDecoration(
@@ -105,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                           ?.copyWith(color: const Color(0xFF77716B)),
                     ),
                     const SizedBox(height: 24),
+                    // Input untuk username.
                     TextFormField(
                       controller: _usernameController,
                       textInputAction: TextInputAction.next,
@@ -112,12 +127,14 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: 'Username',
                         prefixIcon: Icon(Icons.person_outline),
                       ),
+                      // Validasi: username tidak boleh kosong.
                       validator: (value) =>
                           value == null || value.trim().isEmpty
                           ? 'Username wajib diisi'
                           : null,
                     ),
                     const SizedBox(height: 14),
+                    // Input untuk password dengan fitur show/hide.
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -130,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                           tooltip: _obscurePassword
                               ? 'Tampilkan password'
                               : 'Sembunyikan password',
+                          // Toggle untuk menampilkan atau menyembunyikan password.
                           onPressed: () => setState(
                             () => _obscurePassword = !_obscurePassword,
                           ),
@@ -140,11 +158,13 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+                      // Validasi: password tidak boleh kosong.
                       validator: (value) => value == null || value.isEmpty
                           ? 'Password wajib diisi'
                           : null,
                     ),
                     const SizedBox(height: 22),
+                    // Tombol login yang memanggil method _login saat ditekan.
                     FilledButton(
                       onPressed: _login,
                       style: FilledButton.styleFrom(

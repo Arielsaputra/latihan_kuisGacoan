@@ -10,15 +10,23 @@ class MenuDetailPage extends StatefulWidget {
     required this.onFavoriteChanged,
   });
 
+  // Data menu yang sedang dibuka dan ditampilkan detailnya.
   final Menu menu;
+
+  // Status favorit dari menu ini, berasal dari halaman sebelumnya.
   final bool isFavorite;
+
+  // Callback untuk memberi tahu parent bahwa status favorit berubah.
   final ValueChanged<bool> onFavoriteChanged;
 
   @override
   State<MenuDetailPage> createState() => _MenuDetailPageState();
 }
 
+
+
 class _MenuDetailPageState extends State<MenuDetailPage> {
+  // Membuat variabel lokal yang bisa berubah-ubah saat user menekan tombol favorit.
   late bool _isFavorite = widget.isFavorite;
 
   @override
@@ -26,12 +34,15 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
     final menu = widget.menu;
 
     return Scaffold(
+      // AppBar atas halaman detail menu.
       appBar: AppBar(
         title: const Text('Detail Menu'),
         actions: [
+          // Tombol favorit di pojok kanan atas.
           IconButton(
             tooltip: _isFavorite ? 'Hapus dari favorit' : 'Tambah favorit',
             onPressed: () {
+              // Saat tombol diklik, ubah status favorit dan kirim hasil ke parent.
               setState(() => _isFavorite = !_isFavorite);
               widget.onFavoriteChanged(_isFavorite);
             },
@@ -42,9 +53,12 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
           ),
         ],
       ),
+
+      // Isi halaman yang di-scroll.
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         children: [
+          // Gambar utama menu.
           MenuImage(
             image: menu.image,
             width: double.infinity,
@@ -52,6 +66,8 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
             borderRadius: 22,
           ),
           const SizedBox(height: 22),
+
+          // Kategori menu, ditulis uppercase agar lebih menarik.
           Text(
             menu.category.toUpperCase(),
             style: const TextStyle(
@@ -61,12 +77,16 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
             ),
           ),
           const SizedBox(height: 7),
+
+          // Nama menu.
           Text(
             menu.name,
             style: Theme.of(context).textTheme.headlineSmall
                 ?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
+
+          // Harga yang ditampilkan lebih besar dan berwarna merah.
           Text(
             menu.price,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -75,12 +95,16 @@ class _MenuDetailPageState extends State<MenuDetailPage> {
             ),
           ),
           const SizedBox(height: 24),
+
+          // Judul deskripsi menu.
           Text(
             'Tentang menu',
             style: Theme.of(context).textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
+
+          // Deskripsi lengkap menu.
           Text(
             menu.description,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
@@ -100,9 +124,14 @@ class MenuImage extends StatelessWidget {
     this.borderRadius = 14,
   });
 
+  // URL gambar yang akan ditampilkan.
   final String image;
+
+  // Ukuran lebar dan tinggi gambar yang ingin dipakai.
   final double width;
   final double height;
+
+  // Radius sudut agar gambar terlihat lebih rapi dan rounded.
   final double borderRadius;
 
   @override
@@ -110,10 +139,13 @@ class MenuImage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: Image.network(
+        // Menambahkan parameter query agar gambar lebih rapi saat di-fetch.
         '$image?auto=format&fit=crop&w=800&q=80',
         width: width,
         height: height,
         fit: BoxFit.cover,
+
+        // Jika gambar gagal dimuat, tampilkan placeholder dengan ikon restoran.
         errorBuilder: (_, _, _) => Container(
           width: width,
           height: height,

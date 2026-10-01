@@ -4,6 +4,7 @@ import 'models/data.dart';
 import 'views/home_page.dart';
 import 'views/login_page.dart';
 
+// Kelas utama aplikasi yang bertugas mengatur state global aplikasi.
 class GacoanApp extends StatefulWidget {
   const GacoanApp({super.key});
 
@@ -12,23 +13,30 @@ class GacoanApp extends StatefulWidget {
 }
 
 class _GacoanAppState extends State<GacoanApp> {
+  // Variabel ini menyimpan data user yang sedang login.
+  // Jika null, berarti user belum login dan tampilan akan diarahkan ke LoginPage.
   User? _user;
 
+  // Dipanggil saat proses login berhasil.
   void _handleLogin(User user) {
     setState(() => _user = user);
   }
 
+  // Dipanggil saat user logout.
   void _handleLogout() {
     setState(() => _user = null);
   }
 
   @override
   Widget build(BuildContext context) {
+    // Warna utama brand aplikasi, digunakan untuk tema visual.
     const brandRed = Color(0xFFC92836);
 
     return MaterialApp(
       title: 'Gacoan Menu',
       debugShowCheckedModeBanner: false,
+
+      // Tema aplikasi dibuat agar tampilan lebih konsisten dan menarik.
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -43,6 +51,8 @@ class _GacoanAppState extends State<GacoanApp> {
           centerTitle: false,
           elevation: 0,
         ),
+
+        // Pengaturan default untuk semua TextField dalam aplikasi.
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
@@ -64,6 +74,9 @@ class _GacoanAppState extends State<GacoanApp> {
           ),
         ),
       ),
+
+      // Jika user null, tampilkan LoginPage.
+      // Jika user sudah login, tampilkan HomeShell dengan data user.
       home: _user == null
           ? LoginPage(onLogin: _handleLogin)
           : HomeShell(user: _user!, onLogout: _handleLogout),
